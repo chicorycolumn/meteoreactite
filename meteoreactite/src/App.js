@@ -69,19 +69,43 @@ function Table({ columns, data }) {
 	);
 }
 
-function SuperTable() {
+function SuperTable(props) {
 	const columns = React.useMemo(
 		() => [
 			{
-				Header: "Name",
+				Header: "Meteorites",
 				columns: [
 					{
-						Header: "First Name",
-						accessor: "firstName"
+						Header: "Name",
+						accessor: "name"
 					},
 					{
-						Header: "Last Name",
-						accessor: "lastName"
+						Header: "Name Type",
+						accessor: "nametype"
+					},
+					{
+						Header: "Class",
+						accessor: "recclass"
+					},
+					{
+						Header: "Mass(g)",
+						accessor: "mass"
+					},
+					{
+						Header: "Found/Fell",
+						accessor: "fall"
+					},
+					{
+						Header: "Year",
+						accessor: "year"
+					},
+					{
+						Header: "Latitude",
+						accessor: "reclat"
+					},
+					{
+						Header: "Longlitude",
+						accessor: "reclong"
 					}
 				]
 			}
@@ -89,14 +113,16 @@ function SuperTable() {
 		[]
 	);
 
-	const data = [{ firstName: "Jo", lastName: "Hasen" }];
-
-	return (
-		<Styles>
-			<Table columns={columns} data={data} />
-		</Styles>
-	);
+	const data = props.data;
+	if (Array.isArray(data)) {
+		return (
+			<Styles>
+				<Table columns={columns} data={data} />
+			</Styles>
+		);
+	} else return <p>loading...</p>;
 }
+
 class App extends React.Component {
 	state = {
 		data: "nothing yet..."
@@ -111,14 +137,12 @@ class App extends React.Component {
 	componentDidMount() {
 		fetch("https://data.nasa.gov/resource/gh4g-9sfh.json")
 			.then((response) => {
-				console.log(response);
 				if (!response.ok) {
 					throw new Error("Network response was not ok");
 				}
 				return response.json();
 			})
 			.then((data) => {
-				console.log(data[0]);
 				this.setState({ data: data });
 			})
 			.catch((error) => {
@@ -136,7 +160,7 @@ class App extends React.Component {
 				{Object.keys(this.state.data[0]).map((key) => (
 					<p>{`The ${key} is ${this.state.data[0][key]}.`}</p>
 				))}
-				<SuperTable />
+				<SuperTable data={this.state.data} />
 			</div>
 		);
 	}
